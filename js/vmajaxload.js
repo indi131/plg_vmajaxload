@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var pagination = document.querySelector('ul.pagination');
     if (!pagination) return;
 
-    // Получаем текущую страницу из URL
     var currentUrl = window.location.href;
     var startMatch = currentUrl.match(/start=(\d+)/);
     var currentStart = startMatch ? parseInt(startMatch[1]) : 0;
@@ -32,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var loading = false;
     var button = document.querySelector('.vm-load-more');
-    var loadedPages = [currentStart]; // Начинаем отслеживание с текущей страницы
+    var loadedPages = [currentStart];
 
     function initProductSliders() {
         jQuery('.vm-trumb-slider:not(.slick-initialized)').each(function() {
@@ -70,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
             var startMatch = nextPageUrl.match(/start=(\d+)/);
             var startValue = startMatch ? parseInt(startMatch[1]) : 0;
 
-            // Проверяем, не загружали ли мы уже эту страницу
             if (loadedPages.includes(startValue)) {
                 loading = false;
                 button.disabled = false;
@@ -108,10 +106,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             }
 
-                            // Добавляем страницу в список загруженных
                             loadedPages.push(startValue);
                             
-                            // Обновляем URL без перезагрузки
                             history.pushState(null, '', nextPageUrl);
                         } else {
                             button.style.display = 'none';
@@ -131,9 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Обработка нажатия кнопки "назад" в браузере
     window.addEventListener('popstate', function(e) {
-        // Если есть состояние и URL содержит start, позволяем браузеру обработать переход
         if (e.state !== null && window.location.href.includes('start=')) {
             return;
         }
