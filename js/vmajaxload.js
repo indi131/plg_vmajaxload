@@ -5,6 +5,24 @@ document.addEventListener('DOMContentLoaded', function () {
     var pagination = document.querySelector('ul.pagination');
     if (!pagination) return;
 
+    // Проверяем URL и сбрасываем на начальную страницу если нужно
+    var currentUrl = window.location.href;
+    if (currentUrl.includes('start=')) {
+        var baseUrl = currentUrl.split('?')[0];
+        window.location.href = baseUrl;
+        return;
+    }
+
+    // Сбрасываем активный пункт пагинации на первый
+    var paginationItems = pagination.querySelectorAll('li');
+    paginationItems.forEach(function(item) {
+        item.classList.remove('active');
+    });
+    var firstPageItem = pagination.querySelector('li:first-child');
+    if (firstPageItem) {
+        firstPageItem.classList.add('active');
+    }
+
     var isLastPage = false;
     var activePageItem = pagination.querySelector('li.active');
     if (activePageItem) {
@@ -12,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         isLastPage = !nextElement || !nextElement.querySelector('a[href*="start="]');
     }
 
-    var nextPageLink = pagination.querySelector('li:not(.active) a[href*="start="]');
+    var nextPageLink = pagination.querySelector('li.active + li a[href*="start="]');
     if (!nextPageLink || isLastPage) return;
 
     var buttonHtml = `
@@ -27,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var loading = false;
     var button = document.querySelector('.vm-load-more');
+    var loadedPages = [0]; // Отслеживаем загруженные страницы
 
     function initProductSliders() {
         jQuery('.vm-trumb-slider:not(.slick-initialized)').each(function() {
@@ -52,13 +71,25 @@ document.addEventListener('DOMContentLoaded', function () {
             button.disabled = true;
             button.classList.add('loading');
 
-            nextPageLink = pagination.querySelector('li:not(.active) a[href*="start="]');
+            var activePageItem = pagination.querySelector('li.active');
+            var nextPageLink = activePageItem ? activePageItem.nextElementSibling.querySelector('a[href*="start="]') : null;
+            
             if (!nextPageLink) {
                 button.style.display = 'none';
                 return;
             }
 
             var nextPageUrl = nextPageLink.getAttribute('href');
+            var startMatch = nextPageUrl.match(/start=(\d+)/);
+            var startValue = startMatch ? parseInt(startMatch[1]) : 0;
+
+            // Проверяем, не загружали ли мы уже эту страницу
+            if (loadedPages.includes(startValue)) {
+                loading = false;
+                button.disabled = false;
+                button.classList.remove('loading');
+                return;
+            }
 
             fetch(nextPageUrl)
                 .then(response => response.text())
@@ -82,13 +113,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (newPagination) {
                             pagination.innerHTML = newPagination.innerHTML;
                             
-                            var activePageItem = newPagination.querySelector('li.active');
-                            if (activePageItem) {
-                                var nextElement = activePageItem.nextElementSibling;
+                            var newActivePageItem = newPagination.querySelector('li.active');
+                            if (newActivePageItem) {
+                                var nextElement = newActivePageItem.nextElementSibling;
                                 if (!nextElement || !nextElement.querySelector('a[href*="start="]')) {
                                     button.style.display = 'none';
                                 }
                             }
+
+                            // Добавляем страницу в список загруженных
+                            loadedPages.push(startValue);
+                            
+                            // Обновляем URL без перезагрузки
+                            history.pushState(null, '', nextPageUrl);
                         } else {
                             button.style.display = 'none';
                         }
@@ -106,4 +143,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         });
     }
+
+    // Обработка нажатия кнопки "назад" в браузере
+    window.addEventListener('popstate', function() {
+        if (!window.location.href.includes('start=')) {
+            window.location.reload();
+        }
+    });
 });
