@@ -5,24 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var pagination = document.querySelector('ul.pagination');
     if (!pagination) return;
 
-    // Проверяем URL и сбрасываем на начальную страницу если нужно
+    // Получаем текущую страницу из URL
     var currentUrl = window.location.href;
-    if (currentUrl.includes('start=')) {
-        var baseUrl = currentUrl.split('?')[0];
-        window.location.href = baseUrl;
-        return;
-    }
-
-    // Сбрасываем активный пункт пагинации на первый
-    var paginationItems = pagination.querySelectorAll('li');
-    paginationItems.forEach(function(item) {
-        item.classList.remove('active');
-    });
-    var firstPageItem = pagination.querySelector('li:first-child');
-    if (firstPageItem) {
-        firstPageItem.classList.add('active');
-    }
-
+    var startMatch = currentUrl.match(/start=(\d+)/);
+    var currentStart = startMatch ? parseInt(startMatch[1]) : 0;
+    
     var isLastPage = false;
     var activePageItem = pagination.querySelector('li.active');
     if (activePageItem) {
@@ -45,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var loading = false;
     var button = document.querySelector('.vm-load-more');
-    var loadedPages = [0]; // Отслеживаем загруженные страницы
+    var loadedPages = [currentStart]; // Начинаем отслеживание с текущей страницы
 
     function initProductSliders() {
         jQuery('.vm-trumb-slider:not(.slick-initialized)').each(function() {
@@ -145,9 +132,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Обработка нажатия кнопки "назад" в браузере
-    window.addEventListener('popstate', function() {
-        if (!window.location.href.includes('start=')) {
-            window.location.reload();
+    window.addEventListener('popstate', function(e) {
+        // Если есть состояние и URL содержит start, позволяем браузеру обработать переход
+        if (e.state !== null && window.location.href.includes('start=')) {
+            return;
         }
+        window.location.reload();
     });
 });
