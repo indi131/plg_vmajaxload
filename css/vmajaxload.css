@@ -1,0 +1,98 @@
+:root {
+    --vm-loader-primary-color: #007bff;
+    --vm-loader-hover-color: #0056b3;
+    --vm-loader-disabled-color: #cccccc;
+    --vm-loader-background: #f3f3f3;
+    --vm-loader-size: 20px;
+    --vm-button-padding: 12px 24px;
+    --vm-button-font-size: 14px;
+    --vm-button-border-radius: 4px;
+}
+
+.vm-ajax-loader {
+    text-align: center;
+    margin: 20px 0;
+    clear: both;
+}
+
+.vm-load-more {
+    position: relative;
+    padding: var(--vm-button-padding);
+    background-color: var(--vm-loader-primary-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--vm-button-border-radius);
+    cursor: pointer;
+    font-size: var(--vm-button-font-size);
+    transition: all 0.3s ease;
+    min-width: 160px;
+}
+
+.vm-load-more:hover:not(:disabled) {
+    background-color: var(--vm-loader-hover-color);
+    transform: translateY(-1px);
+}
+
+.vm-load-more:disabled {
+    background-color: var(--vm-loader-disabled-color);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.vm-loader-container {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.vm-loader {
+    display: none;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: var(--vm-loader-size);
+    height: var(--vm-loader-size);
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top: 2px solid transparent;
+    animation: spin 1s linear infinite;
+}
+
+.vm-load-more.loading {
+    padding-left: calc(var(--vm-loader-size) + 25px);
+}
+
+.vm-load-more.loading .vm-loader {
+    display: block;
+}
+
+@keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Product styles */
+.product-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: var(--vm-button-border-radius);
+    transition: all 0.3s ease;
+}
+
+.product-container:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-container h2 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.product-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}

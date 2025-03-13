@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" version="3.10" method="upgrade" group="system">
+    <name>plg_system_vmajaxload</name>
+    <author>Александр Долженко</author>
+    <creationDate>2025-03-13</creationDate>
+    <copyright>Александр Долженко</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>dev.entry.point@gmail.com</authorEmail>
+    <authorUrl></authorUrl>
+    <version>1.0.0</version>
+    <description>Plugin for AJAX product loading in VirtueMart 3.10</description>
+
+    <files>
+        <filename plugin="vmajaxload">vmajaxload.php</filename>
+        <folder>js</folder>
+        <folder>css</folder>
+    </files>
+
+    <vmextension>
+        <value>vmajaxload</value>
+        <value>plugin</value>
+        <value>vmextended</value>
+    </vmextension>
+
+    <updateservers>
+        <server type="extension" priority="1" name="VmAjaxLoad Update Site">http://www.example.com/update.xml</server>
+    </updateservers>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="debug_mode" type="radio" default="0" label="Debug Mode" description="Enable debug messages">
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>
